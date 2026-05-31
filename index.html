@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>UD Batako Bragolan - Toko Material Bangunan</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif; }
+        
+        :root {
+            --primary: #e67e22;
+            --primary-dark: #b64926;
+            --secondary: #4a2c1a;
+            --light: #f3efe6;
+            --white: #fff;
+            --dark: #2c2418;
+            --success: #27ae60;
+        }
+        
+        body { background: var(--light); color: var(--dark); }
+        
+        .marquee-wrap { background: var(--primary-dark); color: #fff; padding: 8px 0; overflow: hidden; white-space: nowrap; }
+        .marquee-text { display: inline-block; animation: scrollText 22s linear infinite; padding-left: 100%; }
+        .marquee-text span { margin-right: 48px; }
+        @keyframes scrollText { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        
+        .header { background: var(--secondary); color: #ffe6c7; padding: 20px 16px; text-align: center; }
+        .header h1 { font-size: clamp(1.4rem, 5vw, 2rem); letter-spacing: 2px; }
+        .header p { font-size: clamp(0.8rem, 4vw, 1rem); margin-top: 5px; }
+        
+        .nav-bar { background: #2c1a0e; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .search-box { display: flex; gap: 8px; flex: 1; min-width: 200px; }
+        .search-box input { flex: 1; padding: 12px 16px; border-radius: 50px; border: none; font-size: 14px; min-height: 44px; }
+        .search-box button, .admin-btn { background: var(--primary); border: none; padding: 12px 20px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; font-size: 14px; min-height: 44px; transition: 0.2s; }
+        .search-box button:active, .admin-btn:active { transform: scale(0.97); }
+        .admin-btn { background: #555; }
+        
+        .main-container { display: flex; flex-wrap: wrap; padding: 16px; gap: 20px; max-width: 1400px; margin: 0 auto; }
+        .profile-sidebar { flex: 1; min-width: 260px; background: #fffaf2; border-radius: 28px; padding: 20px; text-align: center; }
+        .products-area { flex: 3; min-width: 260px; }
+        
+        .avatar { width: 120px; height: 120px; background: #b87c4f; border-radius: 50%; margin: 0 auto 15px; overflow: hidden; position: relative; cursor: pointer; }
+        .avatar-img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: white; font-size: 10px; text-align: center; padding: 6px; opacity: 0; transition: 0.3s; }
+        .avatar:hover .avatar-overlay { opacity: 1; }
+        
+        .contact-info p { margin: 12px 0; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .contact-info a { color: var(--dark); text-decoration: none; font-size: 14px; }
+        .copy-btn { background: #ddd; border: none; border-radius: 30px; padding: 6px 12px; cursor: pointer; font-size: 12px; }
+        
+        .category-filter { display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0 20px; }
+        .cat-btn { background: #e0d6c8; border: none; padding: 10px 18px; border-radius: 50px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.2s; min-height: 44px; }
+        .cat-btn.active, .cat-btn:hover { background: var(--primary); color: white; }
+        
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .product-card { background: white; border-radius: 20px; overflow: hidden; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: 0.2s; }
+        .product-card:active { transform: scale(0.98); }
+        .product-img { height: 180px; background: #ddd0c0; display: flex; align-items: center; justify-content: center; font-size: 55px; }
+        .product-img img { width: 100%; height: 100%; object-fit: cover; }
+        .product-info { padding: 14px; }
+        .price { color: var(--primary); font-weight: bold; font-size: 1.3rem; }
+        .size { font-size: 12px; color: #666; margin-top: 4px; }
+        .stock { font-size: 12px; margin-top: 4px; }
+        .stock.in-stock { color: var(--success); }
+        .stock.out-stock { color: #e74c3c; }
+        
+        .maps-container { margin-top: 30px; background: #fffaf2; border-radius: 24px; padding: 20px; text-align: center; }
+        .maps-link { display: inline-block; background: var(--primary); color: white; padding: 14px 28px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 16px; transition: 0.2s; min-height: 52px; }
+        
+        .article-section { background: white; border-radius: 24px; padding: 24px; margin: 30px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .article-title { color: var(--secondary); border-left: 5px solid var(--primary); padding-left: 15px; margin-bottom: 20px; }
+        .article-content { line-height: 1.6; text-align: justify; }
+        .article-content img { max-width: 100%; border-radius: 16px; margin: 15px 0; }
+        .article-content ul { margin-left: 20px; margin-bottom: 15px; }
+        
+        .footer { background: #2c1a0e; color: #ccc; text-align: center; padding: 16px; margin-top: 20px; font-size: 12px; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1100; justify-content: center; align-items: center; }
+        .modal-content { background: #fffaf0; width: 95%; max-width: 850px; max-height: 90vh; border-radius: 28px; padding: 20px; overflow-y: auto; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
+        input, textarea, select { width: 100%; padding: 12px; border-radius: 30px; border: 1px solid #ccc; font-size: 14px; }
+        .btn-save { background: var(--success); color: white; border: none; padding: 12px 24px; border-radius: 50px; cursor: pointer; font-weight: bold; margin-top: 10px; min-height: 48px; }
+        .gallery-preview { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; margin: 5px; cursor: pointer; }
+        
+        @media (max-width: 768px) {
+            .nav-bar { flex-direction: column; }
+            .search-box { width: 100%; }
+            .profile-sidebar { order: 2; }
+            .products-area { order: 1; }
+            .avatar { width: 100px; height: 100px; }
+            .product-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; }
+        }
+        @media (max-width: 480px) {
+            .product-grid { grid-template-columns: 1fr; }
+        }
+        
+        button, .cat-btn, .maps-link, .copy-btn, .admin-btn, .search-box button, .btn-save {
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+        @media (hover: hover) {
+            .product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+        }
+        
+        .toast-notif {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c3e50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            z-index: 1200;
+            font-size: 14px;
+            animation: fadeOut 3s ease forwards;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; bottom: 20px; }
+            70% { opacity: 1; bottom: 20px; }
+            100% { opacity: 0; bottom: -50px; visibility: hidden; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="marquee-wrap"><div class="marquee-text" id="marqueeText"></div></div>
+
+<div class="header">
+    <h1 id="shopName">🧱 UD BATAKO BRAGOLAN 🧱</h1>
+    <p id="headerMotto">Murah, Meriah, Kualitas Terbaik</p>
+</div>
+
+<div class="nav-bar">
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Cari batako, bata, pasir..." enterkeyhint="search">
+        <button id="searchBtn">🔍 Cari</button>
+        <button id="resetSearchBtn" style="background:#7f8c8d;">↺ Reset</button>
+    </div>
+    <button class="admin-btn" id="adminPanelBtn">⚙️ Panel Admin</button>
+</div>
+
+<div class="main-container">
+    <aside class="profile-sidebar">
+        <div class="avatar" id="avatarContainer">
+            <img id="profileAvatar" class="avatar-img" src="https://placehold.co/400x400/e6d5b8/5a3e2b?text=CEO" alt="CEO">
+            <div class="avatar-overlay">🖼️ Ketuk untuk ganti foto</div>
+        </div>
+        <h3 id="ceoName">Hanif Saputra</h3>
+        <p id="mottoText">Batako Kuat, Harga Rakyat</p>
+        <div class="contact-info">
+            <p>📞 <a href="#" id="waLink" target="_blank">+62 812-3456-7890</a> <button class="copy-btn" onclick="copyWANumber()">📋 Salin</button></p>
+            <p>📧 <a href="#" id="emailLink">batako.bragolan@gmail.com</a></p>
+        </div>
+        <div style="margin-top: 20px;"><h4>🏪 Galeri Toko</h4><div id="storeProofGallery" style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center;"></div></div>
+    </aside>
+
+    <main class="products-area">
+        <h2>📦 Produk Material Bangunan</h2>
+        <div class="category-filter" id="categoryFilter"></div>
+        <div class="product-grid" id="productGrid"></div>
+        <div id="searchResultMsg" style="margin: 8px 0; color:#b64926; text-align:center;"></div>
+        
+        <div style="background: #fffaec; border-radius: 24px; padding: 18px; margin: 30px 0;">
+            <h3>📢 Berita & Promo</h3>
+            <div id="newsContainer" style="line-height: 1.4;"></div>
+        </div>
+
+        <div class="article-section">
+            <h3 class="article-title">📖 Mengenal Lebih Dekat Batako: Material Andalan untuk Dinding Kuat</h3>
+            <div class="article-content">
+                <img src="https://placehold.co/800x400/e6d5b8/5a3e2b?text=Batako+Unggulan" alt="Batako UD Bragolan" style="width:100%; max-height:300px; object-fit:cover;">
+                <p>Batako merupakan salah satu material bangunan yang paling populer di Indonesia, terutama untuk konstruksi dinding. Berbeda dengan bata merah yang dibakar, batako dibuat dari campuran semen, pasir, dan air yang dipadatkan sehingga memiliki tekstur lebih padat dan kuat. UD Batako Bragolan menggunakan standar kualitas tinggi dengan perbandingan material yang presisi, menghasilkan batako yang kokoh dan tahan lama.</p>
+                <br>
+                <p><strong>Keunggulan Batako dari UD Batako Bragolan:</strong></p>
+                <ul>
+                    <li>✅ <strong>Kepadatan Tinggi</strong> - Mengurangi risiko retak dan rembesan air.</li>
+                    <li>✅ <strong>Kedap Suara</strong> - Cocok untuk area pemukiman yang membutuhkan ketenangan.</li>
+                    <li>✅ <strong>Tahan Api</strong> - Material non-mudah terbakar, aman untuk rumah Anda.</li>
+                    <li>✅ <strong>Pemasangan Efisien</strong> - Ukuran besar sehingga lebih hemat waktu dan biaya tukang.</li>
+                    <li>✅ <strong>Ramah Lingkungan</strong> - Tidak memerlukan pembakaran kayu, mengurangi polusi.</li>
+                </ul>
+                <p>Untuk hasil plesteran yang maksimal, disarankan menggunakan batako dengan kadar air ideal sebelum dipasang. Tim UD Batako Bragolan selalu memberikan edukasi kepada pelanggan mengenai cara penyimpanan dan pemasangan batako yang benar. Tak hanya menjual, kami juga peduli pada keberhasilan proyek bangunan Anda. 💪🏗️</p>
+                <br>
+                <p>Dengan harga bersaing dan kualitas terjamin, UD Batako Bragolan menjadi pilihan utama para kontraktor dan pembangun di wilayah Bragolan dan sekitarnya. Tersedia juga layanan antar langsung ke lokasi proyek Anda. Kunjungi toko kami atau hubungi via WhatsApp untuk konsultasi gratis!</p>
+            </div>
+        </div>
+        
+        <div class="maps-container">
+            <h3>📍 Lokasi Toko UD Batako Bragolan</h3>
+            <a href="https://maps.app.goo.gl/fUrpL6zZESkAED9p6" target="_blank" class="maps-link">
+                🗺️ Buka Lokasi Toko di Google Maps
+            </a>
+        </div>
+    </main>
+</div>
+
+<footer class="footer">© 2025 UD Batako Bragolan - Toko Material Bangunan Terlengkap | Melayani Grosir & Eceran</footer>
+
+<div id="adminModal" class="modal">
+    <div class="modal-content">
+        <h3>🔐 Panel Admin Toko</h3>
+        <div id="adminAuth">
+            <label>Password Admin:</label>
+            <input type="password" id="adminPass" placeholder="Masukkan password...">
+            <button id="submitPassword">Login</button>
+            <p id="authError" style="color:red;"></p>
+        </div>
+        <div id="adminEditPanel" style="display:none;">
+            <h4>📝 Edit Profil Toko</h4>
+            <div class="form-group"><label>Nama Toko</label><input type="text" id="editShopName"></div>
+            <div class="form-group"><label>Nama CEO</label><input type="text" id="editCeoName"></div>
+            <div class="form-group"><label>Nomor WhatsApp</label><input type="text" id="editWaNumber"></div>
+            <div class="form-group"><label>Email Toko</label><input type="email" id="editEmail"></div>
+            <div class="form-group"><label>Motto</label><input type="text" id="editMotto"></div>
+            <div class="form-group"><label>Teks Berjalan (pisahkan dengan ||)</label><textarea id="editMarqueeText" rows="2"></textarea></div>
+            <div class="form-group"><label>Berita / Promo</label><textarea id="editNews" rows="3"></textarea></div>
+            <div class="form-group"><label>Upload Foto Profil CEO</label><input type="file" id="uploadProfileInput" accept="image/*"></div>
+            
+            <h4>📂 Kelola Kategori Material</h4>
+            <div id="adminCategoryList"></div>
+            <div class="form-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <input type="text" id="newCatName" placeholder="Nama kategori" style="flex:2;">
+                <input type="text" id="newCatIcon" placeholder="Icon" style="flex:1;">
+                <button id="addCategoryBtn">➕ Tambah</button>
+            </div>
+            
+            <h4>📦 Kelola Produk</h4>
+            <div id="adminProductList"></div>
+            <div class="form-group">
+                <select id="newProductCategory"><option value="">Pilih Kategori</option></select>
+                <input type="text" id="newProductName" placeholder="Nama produk">
+                <input type="text" id="newProductPrice" placeholder="Harga (contoh: 1400)">
+                <input type="text" id="newProductUnit" placeholder="Satuan (pcs/m³/sak)">
+                <input type="text" id="newProductSize" placeholder="Ukuran (contoh: 20x10x5 cm)">
+                <input type="text" id="newProductStock" placeholder="Stok">
+                <textarea id="newProductDesc" rows="2" placeholder="Deskripsi lengkap produk"></textarea>
+                <input type="file" id="newProductImg" accept="image/*">
+                <button id="addProductBtn">➕ Tambah Produk</button>
+            </div>
+            
+            <button id="saveAllBtn" class="btn-save" style="background:#2c3e50;">💾 SIMPAN SEMUA PERUBAHAN</button>
+            <button id="closeModalBtn" style="margin-left: 10px; background: gray; border: none; padding: 10px 20px; border-radius: 50px; color: white;">Tutup Panel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ========================
+// PENYIMPANAN MENGGUNAKAN LOCALSTORAGE (PASTI BERHASIL)
+// + DUKUNGAN GOOGLE DRIVE JIKA TERSEDIA
+// ========================
+
+const STORAGE_KEY = "ud_batako_data";
+
+// Data awal (default products from your image)
+let allSettings = {
+    shopName: "UD BATAKO BRAGOLAN",
+    ceoName: "Hanif Saputra",
+    waNumber: "6281234567890",
+    email: "batako.bragolan@gmail.com",
+    motto: "Batako Kuat, Harga Rakyat",
+    address: "Jl. Raya Bragolan, Bragolan",
+    marqueeText: "🔥 PROMO BATAKO SUPER MURAH! 🔥||🏗️ HARGA GROSIR LEBIH HEMAT 🏗️||📞 CALL/WA 0812-3456-7890",
+    news: "✨ PROMO BATAKO MURAH! ✨ Diskon 10% untuk pembelian di atas 1000 pcs. Buka Senin-Sabtu jam 07.00-17.00."
+};
+
+let allProducts = [
+    { id: "prod_1", categoryId: "cat_batako", name: "Batako Press Super", price: 1400, unit: "pcs", size: "20x10x5 cm", stock: "5000", description: "Batako berkualitas tinggi, padat dan kuat. Cocok untuk dinding rumah dan pagar.", imageUrl: "", created_at: new Date().toISOString() },
+    { id: "prod_2", categoryId: "cat_batako", name: "Batako Lubang Satu", price: 1200, unit: "pcs", size: "20x10x5 cm", stock: "8000", description: "Batako dengan 1 lubang, lebih ringan dan hemat semen.", imageUrl: "", created_at: new Date().toISOString() },
+    { id: "prod_3", categoryId: "cat_hebel", name: "Bata Ringan Hebel", price: 8500, unit: "pcs", size: "60x20x10 cm", stock: "2000", description: "Bata ringan AAC, ringan, kedap suara, pemasangan cepat.", imageUrl: "", created_at: new Date().toISOString() },
+    { id: "prod_4", categoryId: "cat_panel", name: "Panel Lantai Instan", price: 125000, unit: "pcs", size: "300x60x12.5 cm", stock: "500", description: "Panel lantai beton instan untuk dak cepat.", imageUrl: "", created_at: new Date().toISOString() },
+    { id: "prod_5", categoryId: "cat_pasir", name: "Pasir Pasang", price: 150000, unit: "m³", size: "-", stock: "100", description: "Pasir berkualitas untuk pemasangan bata dan batako.", imageUrl: "", created_at: new Date().toISOString() },
+    { id: "prod_6", categoryId: "cat_semen", name: "Semen Tiga Roda", price: 68000, unit: "sak", size: "40 kg", stock: "300", description: "Semen kualitas terbaik untuk konstruksi.", imageUrl: "", created_at: new Date().toISOString() }
+];
+
+let allCategories = [
+    { id: "cat_batako", name: "Batako & Bata", icon: "🧱", sort: 1 },
+    { id: "cat_hebel", name: "Bata Ringan", icon: "🧱", sort: 2 },
+    { id: "cat_panel", name: "Panel Lantai", icon: "🏗️", sort: 3 },
+    { id: "cat_pasir", name: "Pasir & Batu", icon: "⛰️", sort: 4 },
+    { id: "cat_semen", name: "Semen", icon: "🏭", sort: 5 }
+];
+
+let profileImageUrl = "";
+let storeProofs = [];
+let currentFilter = "all";
+let currentSearch = "";
+
+// Load data dari localStorage
+function loadFromLocalStorage() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            if (data.settings) allSettings = { ...allSettings, ...data.settings };
+            if (data.products) allProducts = data.products;
+            if (data.categories) allCategories = data.categories;
+            if (data.profileImageUrl) profileImageUrl = data.profileImageUrl;
+            if (data.storeProofs) storeProofs = data.storeProofs;
+        } catch(e) { console.error("Parse error:", e); }
+    }
+}
+
+// Simpan ke localStorage
+function saveToLocalStorage() {
+    const data = {
+        settings: allSettings,
+        products: allProducts,
+        categories: allCategories,
+        profileImageUrl: profileImageUrl,
+        storeProofs: storeProofs,
+        lastUpdated: new Date().toISOString()
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    console.log("Data saved to localStorage, products count:", allProducts.length);
+}
+
+// Tampilkan notifikasi
+function showToast(message, isError = false) {
+    const toast = document.createElement("div");
+    toast.className = "toast-notif";
+    toast.style.background = isError ? "#e74c3c" : "#27ae60";
+    toast.innerText = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+
+function applyUI() {
+    document.getElementById("shopName").innerHTML = allSettings.shopName || "🧱 UD BATAKO BRAGOLAN 🧱";
+    document.getElementById("ceoName").innerText = allSettings.ceoName || "Hanif Saputra";
+    document.getElementById("mottoText").innerText = allSettings.motto || "Batako Kuat, Harga Rakyat";
+    document.getElementById("headerMotto").innerText = allSettings.motto || "Murah, Meriah, Kualitas Terbaik";
+    const wa = allSettings.waNumber || "6281234567890";
+    const waLink = document.getElementById("waLink");
+    waLink.innerHTML = `+${wa}`;
+    waLink.href = `https://wa.me/${wa}`;
+    document.getElementById("emailLink").innerHTML = allSettings.email || "batako.bragolan@gmail.com";
+    document.getElementById("emailLink").href = `mailto:${allSettings.email}`;
+    if(profileImageUrl) document.getElementById("profileAvatar").src = profileImageUrl;
+    let marqueeHtml = "";
+    (allSettings.marqueeText || "").split("||").forEach(t => { if(t.trim()) marqueeHtml += `<span>${escapeHtml(t.trim())}</span>`; });
+    document.getElementById("marqueeText").innerHTML = marqueeHtml;
+    document.getElementById("newsContainer").innerHTML = escapeHtml(allSettings.news || "").replace(/\n/g, '<br>');
+}
+
+function renderCategories() {
+    const container = document.getElementById("categoryFilter");
+    let html = `<button class="cat-btn ${currentFilter === 'all' ? 'active' : ''}" data-cat="all">📦 Semua (${allProducts.length})</button>`;
+    allCategories.forEach(c => { 
+        const count = allProducts.filter(p => p.categoryId === c.id).length;
+        html += `<button class="cat-btn ${currentFilter === c.id ? 'active' : ''}" data-cat="${c.id}">${c.icon || '📦'} ${escapeHtml(c.name)} (${count})</button>`;
+    });
+    container.innerHTML = html;
+    document.querySelectorAll('.cat-btn').forEach(btn => { btn.onclick = () => { currentFilter = btn.dataset.cat; renderCategories(); renderProducts(); }; });
+}
+
+function renderProducts() {
+    let filtered = allProducts.filter(p => currentFilter === 'all' || p.categoryId === currentFilter);
+    if(currentSearch) filtered = filtered.filter(p => p.name.toLowerCase().includes(currentSearch) || (p.description && p.description.toLowerCase().includes(currentSearch)));
+    const container = document.getElementById("productGrid");
+    if(!filtered.length) { container.innerHTML = "<div style='grid-column:1/-1; text-align:center; padding:40px;'>✨ Belum ada produk dalam kategori ini</div>"; return; }
+    let html = "";
+    filtered.forEach(p => {
+        const cat = allCategories.find(c => c.id === p.categoryId);
+        const stockNum = parseInt(p.stock) || 0;
+        const stockClass = stockNum > 0 ? "in-stock" : "out-stock";
+        const stockText = stockNum > 0 ? `📦 Stok: ${formatNumber(p.stock)}` : "❌ Stok Habis";
+        html += `<div class="product-card" data-id="${p.id}">
+            <div class="product-img">${p.imageUrl ? `<img src="${p.imageUrl}">` : (cat?.icon || '🧱')}</div>
+            <div class="product-info">
+                <h4>${escapeHtml(p.name)}</h4>
+                <div class="price">Rp ${formatNumber(p.price)} / ${p.unit || 'pcs'}</div>
+                <div class="size">📏 Ukuran: ${p.size || '-'}</div>
+                <div class="stock ${stockClass}">${stockText}</div>
+                <p>${escapeHtml(p.description || '')}</p>
+            </div>
+        </div>`;
+    });
+    container.innerHTML = html;
+    document.querySelectorAll('.product-card').forEach(card => { card.onclick = () => { const prod = allProducts.find(p => p.id === card.dataset.id); if(prod) alert(`📦 ${prod.name}\n💰 Rp ${formatNumber(prod.price)}/${prod.unit}\n📏 ${prod.size}\n📦 Stok: ${formatNumber(prod.stock)}\n📝 ${prod.description}`); }; });
+}
+
+function renderStoreProofs() {
+    const container = document.getElementById("storeProofGallery");
+    if(!storeProofs.length) { container.innerHTML = "<span>📸 Belum ada foto toko</span>"; return; }
+    container.innerHTML = storeProofs.map(img => `<img src="${img.url}" class="gallery-preview" onclick="window.open(this.src)">`).join('');
+}
+
+function formatNumber(n) { 
+    if(!n && n !== 0) return '0';
+    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'); }
+
+window.copyWANumber = function() { 
+    navigator.clipboard.writeText(allSettings.waNumber || ""); 
+    showToast("Nomor WA disalin!"); 
+};
+
+// Fungsi upload gambar ke localStorage (base64)
+function uploadImageToLocal(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            resolve(e.target.result);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// Avatar click
+document.getElementById("avatarContainer").onclick = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if(file) {
+            const imgData = await uploadImageToLocal(file);
+            profileImageUrl = imgData;
+            document.getElementById("profileAvatar").src = imgData;
+            saveToLocalStorage();
+            showToast("✅ Foto profil berhasil disimpan!");
+        }
+    };
+    input.click();
+};
+
+// Admin Panel
+const modal = document.getElementById("adminModal");
+document.getElementById("adminPanelBtn").onclick = () => modal.style.display = "flex";
+document.getElementById("submitPassword").onclick = () => {
+    if(document.getElementById("adminPass").value === "hanif123$") {
+        document.getElementById("adminAuth").style.display = "none";
+        document.getElementById("adminEditPanel").style.display = "block";
+        
+        // Isi form dengan data terbaru
+        document.getElementById("editShopName").value = allSettings.shopName || "";
+        document.getElementById("editCeoName").value = allSettings.ceoName || "";
+        document.getElementById("editWaNumber").value = allSettings.waNumber || "";
+        document.getElementById("editEmail").value = allSettings.email || "";
+        document.getElementById("editMotto").value = allSettings.motto || "";
+        document.getElementById("editMarqueeText").value = allSettings.marqueeText || "";
+        document.getElementById("editNews").value = allSettings.news || "";
+        
+        renderAdminCategoryList();
+        renderAdminProductList();
+        
+        const catSelect = document.getElementById("newProductCategory");
+        catSelect.innerHTML = '<option value="">Pilih Kategori</option>' + allCategories.map(c => `<option value="${c.id}">${c.icon} ${escapeHtml(c.name)}</option>`).join('');
+        
+        document.getElementById("uploadProfileInput").onchange = async (e) => {
+            const file = e.target.files[0];
+            if(file) {
+                const imgData = await uploadImageToLocal(file);
+                profileImageUrl = imgData;
+                document.getElementById("profileAvatar").src = imgData;
+                saveToLocalStorage();
+                showToast("✅ Foto profil diupdate!");
+            }
+        };
+    } else { 
+        document.getElementById("authError").innerHTML = "Password salah! (password: hanif123$)"; 
+    }
+};
+
+function renderAdminCategoryList() {
+    const container = document.getElementById("adminCategoryList");
+    if(!allCategories.length) { container.innerHTML = "<p>Belum ada kategori</p>"; return; }
+    let html = "<ul style='list-style:none;'>";
+    allCategories.forEach(c => { 
+        html += `<li style="margin-bottom:8px;"><strong>${c.icon} ${escapeHtml(c.name)}</strong> 
+        <button class="delCat" data-id="${c.id}" style="background:#e67e22; border:none; border-radius:20px; padding:4px 12px;">Hapus</button></li>`;
+    });
+    html += "</ul>";
+    container.innerHTML = html;
+    document.querySelectorAll(".delCat").forEach(btn => { 
+        btn.onclick = () => {
+            allCategories = allCategories.filter(c => c.id !== btn.dataset.id);
+            allProducts = allProducts.filter(p => p.categoryId !== btn.dataset.id);
+            saveToLocalStorage();
+            renderAdminCategoryList();
+            renderAdminProductList();
+            renderCategories();
+            renderProducts();
+            showToast("Kategori dan produk terkait dihapus!");
+        };
+    });
+}
+
+function renderAdminProductList() {
+    const container = document.getElementById("adminProductList");
+    if(!allProducts.length) { container.innerHTML = "<p>Belum ada produk</p>"; return; }
+    let html = "<ul style='list-style:none; max-height:200px; overflow-y:auto;'>";
+    allProducts.forEach(p => { 
+        html += `<li style="margin-bottom:8px;"><strong>${escapeHtml(p.name)}</strong> - Rp ${formatNumber(p.price)} 
+        <button class="delProd" data-id="${p.id}" style="background:#e67e22; border:none; border-radius:20px; padding:4px 12px;">Hapus</button></li>`;
+    });
+    html += "</ul>";
+    container.innerHTML = html;
+    document.querySelectorAll(".delProd").forEach(btn => { 
+        btn.onclick = () => {
+            allProducts = allProducts.filter(p => p.id !== btn.dataset.id);
+            saveToLocalStorage();
+            renderAdminProductList();
+            renderCategories();
+            renderProducts();
+            showToast("Produk dihapus!");
+        };
+    });
+}
+
+document.getElementById("addCategoryBtn").onclick = () => {
+    const name = document.getElementById("newCatName").value.trim();
+    const icon = document.getElementById("newCatIcon").value.trim() || "📦";
+    if(!name) { alert("Nama kategori wajib diisi"); return; }
+    allCategories.push({ id: "cat_" + Date.now(), name, icon, sort: allCategories.length + 1 });
+    saveToLocalStorage();
+    renderAdminCategoryList();
+    renderCategories();
+    document.getElementById("newCatName").value = "";
+    document.getElementById("newCatIcon").value = "";
+    showToast("Kategori ditambahkan!");
+};
+
+document.getElementById("addProductBtn").onclick = async () => {
+    const categoryId = document.getElementById("newProductCategory").value;
+    const name = document.getElementById("newProductName").value.trim();
+    const price = document.getElementById("newProductPrice").value.trim();
+    if(!categoryId || !name || !price) { alert("Kategori, nama, dan harga wajib diisi!"); return; }
+    
+    let imageUrl = "";
+    const imgFile = document.getElementById("newProductImg").files[0];
+    if(imgFile) {
+        imageUrl = await uploadImageToLocal(imgFile);
+    }
+    
+    allProducts.push({
+        id: "prod_" + Date.now(),
+        categoryId, 
+        name, 
+        price: parseInt(price.replace(/\./g, '')),
+        unit: document.getElementById("newProductUnit").value.trim() || "pcs",
+        size: document.getElementById("newProductSize").value.trim() || "-",
+        stock: document.getElementById("newProductStock").value.trim() || "0",
+        description: document.getElementById("newProductDesc").value.trim() || "",
+        imageUrl: imageUrl,
+        created_at: new Date().toISOString()
+    });
+    
+    saveToLocalStorage();
+    renderAdminProductList();
+    renderCategories();
+    renderProducts();
+    
+    // Reset form
+    document.getElementById("newProductName").value = "";
+    document.getElementById("newProductPrice").value = "";
+    document.getElementById("newProductUnit").value = "";
+    document.getElementById("newProductSize").value = "";
+    document.getElementById("newProductStock").value = "";
+    document.getElementById("newProductDesc").value = "";
+    document.getElementById("newProductImg").value = "";
+    
+    showToast("✅ Produk berhasil ditambahkan!");
+};
+
+document.getElementById("saveAllBtn").onclick = () => {
+    allSettings.shopName = document.getElementById("editShopName").value;
+    allSettings.ceoName = document.getElementById("editCeoName").value;
+    allSettings.waNumber = document.getElementById("editWaNumber").value;
+    allSettings.email = document.getElementById("editEmail").value;
+    allSettings.motto = document.getElementById("editMotto").value;
+    allSettings.marqueeText = document.getElementById("editMarqueeText").value;
+    allSettings.news = document.getElementById("editNews").value;
+    
+    saveToLocalStorage();
+    applyUI();
+    showToast("✅ Semua perubahan berhasil disimpan!");
+    modal.style.display = "none";
+};
+
+document.getElementById("closeModalBtn").onclick = () => modal.style.display = "none";
+window.onclick = (e) => { if(e.target === modal) modal.style.display = "none"; };
+
+// Search
+document.getElementById("searchBtn").onclick = () => { currentSearch = document.getElementById("searchInput").value.toLowerCase(); renderProducts(); };
+document.getElementById("resetSearchBtn").onclick = () => { document.getElementById("searchInput").value = ""; currentSearch = ""; renderProducts(); };
+document.getElementById("searchInput").addEventListener("keypress", (e) => { if(e.key === "Enter") document.getElementById("searchBtn").click(); });
+
+// Inisialisasi
+loadFromLocalStorage();
+applyUI();
+renderCategories();
+renderProducts();
+renderStoreProofs();
+
+console.log("Data loaded, products:", allProducts.length);
+</script>
+</body>
+</html>
