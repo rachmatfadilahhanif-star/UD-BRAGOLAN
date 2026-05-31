@@ -81,7 +81,9 @@
         .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
         input, textarea, select { width: 100%; padding: 12px; border-radius: 30px; border: 1px solid #ccc; font-size: 14px; }
         .btn-save { background: var(--success); color: white; border: none; padding: 12px 24px; border-radius: 50px; cursor: pointer; font-weight: bold; margin-top: 10px; min-height: 48px; }
-        .gallery-preview { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; margin: 5px; cursor: pointer; }
+        .gallery-preview { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; margin: 5px; cursor: pointer; border: 2px solid var(--primary); }
+        .gallery-upload-area { background: #f0e6d6; border: 2px dashed var(--primary); border-radius: 20px; padding: 15px; margin: 15px 0; text-align: center; cursor: pointer; }
+        .gallery-upload-area:hover { background: #e6d6c0; }
         
         @media (max-width: 768px) {
             .nav-bar { flex-direction: column; }
@@ -153,7 +155,10 @@
             <p>📞 <a href="#" id="waLink" target="_blank">+62 812-3456-7890</a> <button class="copy-btn" onclick="copyWANumber()">📋 Salin</button></p>
             <p>📧 <a href="#" id="emailLink">batako.bragolan@gmail.com</a></p>
         </div>
-        <div style="margin-top: 20px;"><h4>🏪 Galeri Toko</h4><div id="storeProofGallery" style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center;"></div></div>
+        <div style="margin-top: 20px;">
+            <h4>🏪 Galeri Toko</h4>
+            <div id="storeProofGallery" style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center;"></div>
+        </div>
     </aside>
 
     <main class="products-area">
@@ -218,6 +223,13 @@
             <div class="form-group"><label>Berita / Promo</label><textarea id="editNews" rows="3"></textarea></div>
             <div class="form-group"><label>Upload Foto Profil CEO</label><input type="file" id="uploadProfileInput" accept="image/*"></div>
             
+            <h4>🏪 Kelola Galeri Toko</h4>
+            <div id="adminGalleryList" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:15px;"></div>
+            <div class="gallery-upload-area" id="galleryUploadArea">
+                📸 + Klik atau taruh foto untuk menambah galeri
+                <input type="file" id="galleryFileInput" accept="image/*" style="display:none;" multiple>
+            </div>
+            
             <h4>📂 Kelola Kategori Material</h4>
             <div id="adminCategoryList"></div>
             <div class="form-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -249,12 +261,11 @@
 <script>
 // ========================
 // PENYIMPANAN MENGGUNAKAN LOCALSTORAGE (PASTI BERHASIL)
-// + DUKUNGAN GOOGLE DRIVE JIKA TERSEDIA
 // ========================
 
 const STORAGE_KEY = "ud_batako_data";
 
-// Data awal (default products from your image)
+// Data awal
 let allSettings = {
     shopName: "UD BATAKO BRAGOLAN",
     ceoName: "Hanif Saputra",
@@ -314,10 +325,9 @@ function saveToLocalStorage() {
         lastUpdated: new Date().toISOString()
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    console.log("Data saved to localStorage, products count:", allProducts.length);
+    console.log("Data saved, produk:", allProducts.length, "galeri:", storeProofs.length);
 }
 
-// Tampilkan notifikasi
 function showToast(message, isError = false) {
     const toast = document.createElement("div");
     toast.className = "toast-notif";
@@ -379,13 +389,35 @@ function renderProducts() {
         </div>`;
     });
     container.innerHTML = html;
-    document.querySelectorAll('.product-card').forEach(card => { card.onclick = () => { const prod = allProducts.find(p => p.id === card.dataset.id); if(prod) alert(`📦 ${prod.name}\n💰 Rp ${formatNumber(prod.price)}/${prod.unit}\n📏 ${prod.size}\n📦 Stok: ${formatNumber(prod.stock)}\n📝 ${prod.description}`); }; });
 }
 
 function renderStoreProofs() {
     const container = document.getElementById("storeProofGallery");
-    if(!storeProofs.length) { container.innerHTML = "<span>📸 Belum ada foto toko</span>"; return; }
-    container.innerHTML = storeProofs.map(img => `<img src="${img.url}" class="gallery-preview" onclick="window.open(this.src)">`).join('');
+    if(!storeProofs.length) { container.innerHTML = "<span>📸 Belum ada foto toko. Login admin untuk menambah.</span>"; return; }
+    container.innerHTML = storeProofs.map((img, idx) => `<img src="${img.url}" class="gallery-preview" onclick="window.open(this.src)" title="${escapeHtml(img.name)}">`).join('');
+}
+
+function renderAdminGalleryList() {
+    const container = document.getElementById("adminGalleryList");
+    if(!container) return;
+    if(!storeProofs.length) { container.innerHTML = "<p>Belum ada foto galeri</p>"; return; }
+    container.innerHTML = storeProofs.map((img, idx) => `
+        <div style="position:relative; display:inline-block;">
+            <img src="${img.url}" style="width:80px; height:80px; object-fit:cover; border-radius:12px; border:2px solid #e67e22;">
+            <button class="delGallery" data-idx="${idx}" style="position:absolute; top:-5px; right:-5px; background:#e74c3c; color:white; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer;">✕</button>
+        </div>
+    `).join('');
+    
+    document.querySelectorAll(".delGallery").forEach(btn => {
+        btn.onclick = () => {
+            const idx = parseInt(btn.dataset.idx);
+            storeProofs.splice(idx, 1);
+            saveToLocalStorage();
+            renderStoreProofs();
+            renderAdminGalleryList();
+            showToast("Foto galeri dihapus!");
+        };
+    });
 }
 
 function formatNumber(n) { 
@@ -399,13 +431,10 @@ window.copyWANumber = function() {
     showToast("Nomor WA disalin!"); 
 };
 
-// Fungsi upload gambar ke localStorage (base64)
 function uploadImageToLocal(file) {
     return new Promise((resolve) => {
         const reader = new FileReader();
-        reader.onload = (e) => {
-            resolve(e.target.result);
-        };
+        reader.onload = (e) => resolve(e.target.result);
         reader.readAsDataURL(file);
     });
 }
@@ -436,7 +465,6 @@ document.getElementById("submitPassword").onclick = () => {
         document.getElementById("adminAuth").style.display = "none";
         document.getElementById("adminEditPanel").style.display = "block";
         
-        // Isi form dengan data terbaru
         document.getElementById("editShopName").value = allSettings.shopName || "";
         document.getElementById("editCeoName").value = allSettings.ceoName || "";
         document.getElementById("editWaNumber").value = allSettings.waNumber || "";
@@ -447,6 +475,7 @@ document.getElementById("submitPassword").onclick = () => {
         
         renderAdminCategoryList();
         renderAdminProductList();
+        renderAdminGalleryList();
         
         const catSelect = document.getElementById("newProductCategory");
         catSelect.innerHTML = '<option value="">Pilih Kategori</option>' + allCategories.map(c => `<option value="${c.id}">${c.icon} ${escapeHtml(c.name)}</option>`).join('');
@@ -461,6 +490,24 @@ document.getElementById("submitPassword").onclick = () => {
                 showToast("✅ Foto profil diupdate!");
             }
         };
+        
+        // Galeri upload
+        const galleryUploadArea = document.getElementById("galleryUploadArea");
+        const galleryFileInput = document.getElementById("galleryFileInput");
+        galleryUploadArea.onclick = () => galleryFileInput.click();
+        galleryFileInput.onchange = async (e) => {
+            const files = Array.from(e.target.files);
+            for(const file of files) {
+                const imgData = await uploadImageToLocal(file);
+                storeProofs.push({ url: imgData, name: file.name, uploadedAt: new Date().toISOString() });
+            }
+            saveToLocalStorage();
+            renderStoreProofs();
+            renderAdminGalleryList();
+            showToast(`✅ ${files.length} foto galeri berhasil ditambahkan!`);
+            galleryFileInput.value = '';
+        };
+        
     } else { 
         document.getElementById("authError").innerHTML = "Password salah! (password: hanif123$)"; 
     }
@@ -555,7 +602,6 @@ document.getElementById("addProductBtn").onclick = async () => {
     renderCategories();
     renderProducts();
     
-    // Reset form
     document.getElementById("newProductName").value = "";
     document.getElementById("newProductPrice").value = "";
     document.getElementById("newProductUnit").value = "";
@@ -597,7 +643,7 @@ renderCategories();
 renderProducts();
 renderStoreProofs();
 
-console.log("Data loaded, products:", allProducts.length);
+console.log("Data loaded, produk:", allProducts.length, "galeri:", storeProofs.length);
 </script>
 </body>
 </html>
